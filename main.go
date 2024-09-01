@@ -13,22 +13,22 @@ var (
 )
 
 func readDirRecursion(dirName string) (files []interface{}, err error) {
-	f, err := os.ReadDir(dirName)
+	fs, err := os.ReadDir(dirName)
 	if err != nil {
 		return nil, err
 	}
-	for _, v := range f {
-		if v.IsDir() {
-			files1, err := readDirRecursion(path.Join(dirName, v.Name()))
+	for _, f := range fs {
+		if f.IsDir() {
+			childrenFiles, err := readDirRecursion(path.Join(dirName, f.Name()))
 			if err != nil {
 				return files, err
 			}
-			files = append(files, files1...)
+			files = append(files, childrenFiles...)
 		} else {
-			info, _ := v.Info()
-			if (strings.HasPrefix(v.Name(), "._") && info.Size() == 4096) ||
-				v.Name() == ".DS_Store" {
-				files = append(files, path.Join(dirName, v.Name()))
+			info, _ := f.Info()
+			if (strings.HasPrefix(f.Name(), "._") && info.Size() == 4096) ||
+				f.Name() == ".DS_Store" {
+				files = append(files, path.Join(dirName, f.Name()))
 			}
 		}
 	}
@@ -36,16 +36,16 @@ func readDirRecursion(dirName string) (files []interface{}, err error) {
 }
 
 func moveFileRecursion(files []interface{}) error {
-	for _, v := range files {
-		switch v := v.(type) {
+	for _, f := range files {
+		switch f := f.(type) {
 		case string:
-			err := os.Rename(v, path.Join(resultDir, path.Base(v)))
-			fmt.Println("已归档", v)
+			err := os.Rename(f, path.Join(resultDir, f))
+			fmt.Println("已归档", f)
 			if err != nil {
 				return err
 			}
 		case []interface{}:
-			err := moveFileRecursion(v)
+			err := moveFileRecursion(f)
 			if err != nil {
 				return err
 			}
