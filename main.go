@@ -39,7 +39,7 @@ func moveFileRecursion(files []interface{}) error {
 	for _, f := range files {
 		switch f := f.(type) {
 		case string:
-			err := os.Rename(f, path.Join(resultDir, f))
+			err := os.Rename(f, path.Join(resultDir, path.Base(f)))
 			fmt.Println("已归档", f)
 			if err != nil {
 				return err
