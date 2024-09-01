@@ -8,7 +8,7 @@ import (
 )
 
 var (
-	origDir   = "./"
+	origDir   string
 	resultDir = ".wait_clean"
 )
 
@@ -55,6 +55,7 @@ func moveFileRecursion(files []interface{}) error {
 }
 
 func main() {
+	origDir, _ = os.Getwd()
 	os.Mkdir(resultDir, 0755)
 	files, err := readDirRecursion(origDir)
 	if err != nil {
